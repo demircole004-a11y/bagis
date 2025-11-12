@@ -1,0 +1,1018 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- AFAD Resmi Başlık ve Favicon -->
+    <title>T.C. İçişleri Bakanlığı Afet ve Acil Durum Yönetimi Başkanlığı</title>
+    <link rel="shortcut icon" href="https://www.afad.gov.tr/kurumlar/afad.gov.tr/Tasarim/afad_fav.png" type="image/x-icon">
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Inter Font Ailesi -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- İkonlar için Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            /* AFAD Resmi Mavi Rengi */
+            --afad-mavi: #0054a6;
+            /* AFAD Resmi Turuncu Rengi */
+            --afad-turuncu: #f47920;
+        }
+        /* Pürüzsüz kaydırma efekti */
+        html {
+            scroll-behavior: smooth;
+        }
+        /* SSS bölümü için açılma animasyonu */
+        details > summary {
+            list-style: none; /* Varsayılan oku kaldır */
+            cursor: pointer;
+        }
+        details > summary::-webkit-details-marker {
+            display: none; /* Varsayılan oku kaldır (Safari) */
+        }
+        details > summary::after {
+            content: '\f078'; /* Font Awesome 'chevron-down' */
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+            float: right;
+            transition: transform 0.2s ease-in-out;
+        }
+        details[open] > summary::after {
+            transform: rotate(180deg);
+        }
+        /* Modal için stil */
+        .modal-overlay {
+            transition: opacity 0.3s ease;
+        }
+        /* Kampanya kartı açıklama alanı için satır sınırlaması */
+        .line-clamp-3 {
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;  
+            overflow: hidden;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+
+    <!-- Header (Standart / Çıkış Yapmış) -->
+    <header id="header-logged-out" class="bg-white shadow-md sticky top-0 z-50">
+        <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <!-- Logo -->
+            <a href="#" onclick="showPage('page-home'); return false;" class="flex items-center">
+                <img src="https://www.afad.gov.tr/kurumlar/afad.gov.tr/IcSite/afad-logo/afad.png" alt="AFAD Logosu" class="h-12 mr-3">
+                <span class="text-xl font-bold text-gray-800 hidden md:block">Afet ve Acil Durum Yönetimi Başkanlığı</span>
+            </a>
+            <!-- Navigasyon Linkleri -->
+            <div class="hidden md:flex items-center space-x-6">
+                <a href="#" onclick="showPage('page-home'); return false;" class="text-gray-700 hover:text-red-600 transition duration-300">Ana Sayfa</a>
+                <a href="#bagis-kanallari" class="text-gray-700 hover:text-red-600 transition duration-300">Bağış Kanalları</a>
+                <a href="#faq" class="text-gray-700 hover:text-red-600 transition duration-300">S.S.S.</a>
+                <a href="#" class="text-gray-700 hover:text-red-600 transition duration-300">İletişim</a>
+                
+                <button id="openModalBtn" class="bg-red-600 text-white font-semibold py-2 px-5 rounded-lg hover:bg-red-700 transition duration-300 shadow">
+                    Hızlı Bağış
+                </button>
+                <a href="#" onclick="showPage('page-login'); return false;" class="bg-gray-700 text-white font-semibold py-2 px-5 rounded-lg hover:bg-gray-800 transition duration-300 shadow">
+                    Giriş Yap
+                </a>
+            </div>
+            <!-- Mobil Menu Butonu (İşlevsellik eklenmedi) -->
+            <div class="md:hidden">
+                <button class="text-gray-700 focus:outline-none">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path>
+                    </svg>
+                </button>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Header (Giriş Yapılmış Versiyon) -->
+    <header id="header-logged-in" class="bg-white shadow-md sticky top-0 z-50 hidden">
+        <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <!-- Logo -->
+            <a href="#" onclick="showPage('page-home'); return false;" class="flex items-center">
+                <img src="https://www.afad.gov.tr/kurumlar/afad.gov.tr/IcSite/afad-logo/afad.png" alt="AFAD Logosu" class="h-12 mr-3">
+                <span class="text-xl font-bold text-gray-800 hidden md:block">Afet ve Acil Durum Yönetimi Başkanlığı</span>
+            </a>
+            <!-- Navigasyon Linkleri (Giriş Yapılmış) -->
+            <div class="hidden md:flex space-x-6 items-center">
+                <a href="#" onclick="showPage('page-home'); return false;" class="text-gray-700 hover:text-red-600 transition duration-300">Ana Sayfa</a>
+                <!-- (Yeni Bağış Yap) butonu modalı açar -->
+                <a href="#" onclick="openModalWithCampaign('','')" class="text-gray-700 hover:text-red-600 transition duration-300">(Yeni Bağış Yap)</a>
+                <a href="#" onclick="showPage('page-account', true); return false;" class="font-semibold text-red-600 transition duration-300">Hesabım</a>
+                <!-- Çıkış yap linki ana sayfaya yönlendirir ve header'ı sıfırlar -->
+                <a href="#" onclick="showPage('page-home', false); return false;" class="text-gray-500 hover:text-red-600 transition duration-300 text-sm">
+                    (Çıkış Yap <i class="fas fa-sign-out-alt ml-1"></i>)
+                </a>
+            </div>
+        </nav>
+    </header>
+
+    <!-- SAYFA 1: ANA SAYFA -->
+    <main id="page-home" class="">
+        <section class="relative h-auto min-h-[calc(100vh-72px)] flex items-center justify-center text-center py-20">
+            <!-- Arka Plan Görseli -->
+            <div class="absolute inset-0">
+                <img src="https://www.afad.gov.tr/kurumlar/afad.gov.tr/Haberler/2025/oryantasyon-kampi/1.jpeg" 
+                     alt="AFAD Yardım Ekibi" 
+                     class="w-full h-full object-cover">
+                <!-- Overlay -->
+                <div class="absolute inset-0 bg-black opacity-60"></div>
+            </div>
+            
+            <!-- İçerik -->
+            <div class="relative z-10 p-6 w-full max-w-2xl mx-auto">
+                <!-- Seçim Kartı -->
+                <div class="bg-white/95 backdrop-blur-sm p-8 md:p-12 rounded-lg shadow-xl text-gray-800">
+                    <h1 class="text-3xl md:text-4xl font-bold mb-4 text-center text-red-600">Desteğinizle Güçlüyüz</h1>
+                    <p class="text-lg mb-8 text-center">Afetzedelere yardım elinizi uzatın. Desteğiniz, umut olacak.</p>
+                </div>
+            </div>
+        </section>
+        
+        <!-- YENİ: Güncel Yardım Kampanyaları -->
+        <!-- YENİ: Güncel Yardım Kampanyaları (Resmi Siteden Alındı) -->
+        <section id="kampanyalar" class="py-20 bg-white">
+            <div class="container mx-auto px-6">
+                <h2 class="text-3xl font-bold text-center text-gray-800 mb-12">Güncel Yardım Kampanyaları</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+
+                    <!-- Kampanya Kartı 1: Yangın ve Sel -->
+                    <div class="bg-gray-50 border border-gray-200 rounded-lg shadow-lg overflow-hidden flex flex-col">
+                        <img src="https://www.afad.gov.tr/kurumlar/afad.gov.tr/kampanyalar/yangin-sel/yangin-kare.jpg" alt="Yangın ve Sel Afeti Kampanyası" class="w-full h-48 object-cover">
+                        <div class="p-6 flex flex-col flex-grow">
+                            <h3 class="text-xl font-semibold text-gray-800 mb-3">Yangın ve Sel Afeti Kampanyası</h3>
+                            <p class="text-gray-600 text-sm mb-4 flex-grow line-clamp-3">"Yangın ve Sel Afeti Yardım Kampanyası”na ilişkin Banka Hesap numaraları</p>
+                            <button onclick="openModalWithCampaign('Yangın ve Sel Afeti Kampanyası', 'yangin-sel')" class="w-full mt-auto bg-red-600 text-white font-bold py-3 px-5 rounded-lg hover:bg-red-700 transition duration-300 shadow-lg">
+                                Bağış Yap
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Kampanya Kartı 2: Gazze Zekat -->
+                    <div class="bg-gray-50 border border-gray-200 rounded-lg shadow-lg overflow-hidden flex flex-col">
+                        <img src="https://www.afad.gov.tr/kurumlar/afad.gov.tr/kampanyalar/gazze-/Gazze-Yardim.jpg" alt="Filistin ve Gazze İçin Zekat Kampanyası" class="w-full h-48 object-cover">
+                        <div class="p-6 flex flex-col flex-grow">
+                            <h3 class="text-xl font-semibold text-gray-800 mb-3">Filistin ve Gazze İçin Zekat Kampanyası</h3>
+                            <p class="text-gray-600 text-sm mb-4 flex-grow line-clamp-3">Zekat bağışlarınızı bu kampanya üzerinden Filistin ve Gazze'deki ihtiyaç sahiplerine ulaştırabilirsiniz.</p>
+                            <button onclick="openModalWithCampaign('Filistin ve Gazze İçin Zekat Kampanyası', 'zekat')" class="w-full mt-auto bg-red-600 text-white font-bold py-3 px-5 rounded-lg hover:bg-red-700 transition duration-300 shadow-lg">
+                                Bağış Yap
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Kampanya Kartı 3: Filistin -->
+                    <div class="bg-gray-50 border border-gray-200 rounded-lg shadow-lg overflow-hidden flex flex-col">
+                        <img src="https://www.afad.gov.tr/kurumlar/afad.gov.tr/kampanyalar/filistin-elele.jpg" alt="Filistin Yardım Kampanyası" class="w-full h-48 object-cover">
+                        <div class="p-6 flex flex-col flex-grow">
+                            <h3 class="text-xl font-semibold text-gray-800 mb-3">Filistin Yardım Kampanyası</h3>
+                            <p class="text-gray-600 text-sm mb-4 flex-grow line-clamp-3">Günlerdir yoğun saldırı altında ölüm kalım mücadelesi veren Filistinli kardeşlerimiz için düzenlediğimiz yardım kampanyasına davet ediyor; bağışlarınızı Filistinli kardeşlerimize ulaştırıyoruz.</p>
+                            <button onclick="openModalWithCampaign('Filistin Yardım Kampanyası', 'filistin')" class="w-full mt-auto bg-red-600 text-white font-bold py-3 px-5 rounded-lg hover:bg-red-700 transition duration-300 shadow-lg">
+                                Bağış Yap
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Kampanya Kartı 4: Deprem -->
+                    <div class="bg-gray-50 border border-gray-200 rounded-lg shadow-lg overflow-hidden flex flex-col">
+                        <img src="https://www.afad.gov.tr/kurumlar/afad.gov.tr/kampanyalar/Deprem/bagis-deprem.jpeg" alt="Deprem Bağışları" class="w-full h-48 object-cover">
+                        <div class="p-6 flex flex-col flex-grow">
+                            <h3 class="text-xl font-semibold text-gray-800 mb-3">Deprem Bağışları</h3>
+                            <p class="text-gray-600 text-sm mb-4 flex-grow line-clamp-3">Depremden zarar gören afetzedelere yardım için bağış hesapları.</p>
+                            <button onclick="openModalWithCampaign('Deprem Bağışları', 'deprem')" class="w-full mt-auto bg-red-600 text-white font-bold py-3 px-5 rounded-lg hover:bg-red-700 transition duration-300 shadow-lg">
+                                Bağış Yap
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Kampanya Kartı 5: Pakistan -->
+                    <div class="bg-gray-50 border border-gray-200 rounded-lg shadow-lg overflow-hidden flex flex-col">
+                        <img src="https://www.afad.gov.tr/kurumlar/afad.gov.tr/kampanyalar/Pakistan/pakistan_sanalpost4x3.gif" alt="Pakistan Yardım Kampanyası" class="w-full h-48 object-cover">
+                        <div class="p-6 flex flex-col flex-grow">
+                            <h3 class="text-xl font-semibold text-gray-800 mb-3">Pakistan Yardım Kampanyası</h3>
+                            <p class="text-gray-600 text-sm mb-4 flex-grow line-clamp-3">Türkiye, on milyonlarca insanın sel ve su taşkınlarından etkilendiği Pakistan’a havadan ve karadan yardım elini uzatmaya devam ediyor.</p>
+                            <button onclick="openModalWithCampaign('Pakistan Yardım Kampanyası', 'pakistan')" class="w-full mt-auto bg-red-600 text-white font-bold py-3 px-5 rounded-lg hover:bg-red-700 transition duration-300 shadow-lg">
+                                Bağış Yap
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Kampanya Kartı 6: Afganistan -->
+                    <div class="bg-gray-50 border border-gray-200 rounded-lg shadow-lg overflow-hidden flex flex-col">
+                        <img src="https://www.afad.gov.tr/kurumlar/afad.gov.tr/kampanyalar/Afganistan/haber-afgan.jpg" alt="Afganistan Yardım Kampanyası" class="w-full h-48 object-cover">
+                        <div class="p-6 flex flex-col flex-grow">
+                            <h3 class="text-xl font-semibold text-gray-800 mb-3">Afganistan Yardım Kampanyası</h3>
+                            <p class="text-gray-600 text-sm mb-4 flex-grow line-clamp-3">Dünyanın dört bir yanında zor durumdaki insanların yardımına koşan ve her koşulda insanlığın yanında olmayı seçen ülkemiz, zor günler geçiren Afganistan halkının yanında!</p>
+                            <button onclick="openModalWithCampaign('Afganistan Yardım Kampanyası', 'afganistan')" class="w-full mt-auto bg-red-600 text-white font-bold py-3 px-5 rounded-lg hover:bg-red-700 transition duration-300 shadow-lg">
+                                Bağış Yap
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Kampanya Kartı 7: İdlib -->
+                    <div class="bg-gray-50 border border-gray-200 rounded-lg shadow-lg overflow-hidden flex flex-col">
+                        <img src="https://www.afad.gov.tr/kurumlar/afad.gov.tr/kampanyalar/suriye/kampanya_suriye.jpeg" alt="İdlib Yardım Kampanyası" class="w-full h-48 object-cover">
+                        <div class="p-6 flex flex-col flex-grow">
+                            <h3 class="text-xl font-semibold text-gray-800 mb-3">İdlib Yardım Kampanyası</h3>
+                            <p class="text-gray-600 text-sm mb-4 flex-grow line-clamp-3">İdlib kampanyası.</p>
+                            <button onclick="openModalWithCampaign('İdlib Yardım Kampanyası', 'idlib')" class="w-full mt-auto bg-red-600 text-white font-bold py-3 px-5 rounded-lg hover:bg-red-700 transition duration-300 shadow-lg">
+                                Bağış Yap
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Kampanya Kartı 8: Sudan -->
+                    <div class="bg-gray-50 border border-gray-200 rounded-lg shadow-lg overflow-hidden flex flex-col">
+                        <img src="https://www.afad.gov.tr/kurumlar/afad.gov.tr/kampanyalar/Sudan_Kamp/sudan-afis.JPG" alt="Sudan Yardım Kampanyası" class="w-full h-48 object-cover">
+                        <div class="p-6 flex flex-col flex-grow">
+                            <h3 class="text-xl font-semibold text-gray-800 mb-3">Sudan Yardım Kampanyası</h3>
+                            <p class="text-gray-600 text-sm mb-4 flex-grow line-clamp-3">Tarihindeki en büyük sel felaketini yaşayan Sudan halkı için başkanlığımızca insani yardım kampanyası başlatılmıştır.</p>
+                            <button onclick="openModalWithCampaign('Sudan Yardım Kampanyası', 'sudan')" class="w-full mt-auto bg-red-600 text-white font-bold py-3 px-5 rounded-lg hover:bg-red-700 transition duration-300 shadow-lg">
+                                Bağış Yap
+                            </button>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+        <!-- KAMPANYALAR BİTİŞ -->
+
+
+        <!-- Bağış Kanalları Bölümü -->
+        <section id="bagis-kanallari" class="py-20 bg-gray-100">
+            <div class="container mx-auto px-6">
+                <h2 class="text-3xl font-bold text-center text-gray-800 mb-12">Diğer Bağış Kanalları</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                    
+                    <!-- SMS Bağışı -->
+                    <div class="bg-white p-6 rounded-lg shadow-lg border border-gray-200">
+                        <i class="fas fa-mobile-alt fa-3x text-red-600 mb-4"></i>
+                        <h3 class="text-xl font-semibold text-gray-800 mb-2">SMS ile Bağış</h3>
+                        <p class="text-gray-600 mb-4">"DEPREM" yazıp 1868'e göndererek 50 TL bağışta bulunun.</p>
+                        <a href="sms:1868&body=DEPREM" class="font-semibold text-red-600 hover:underline">SMS Gönder <i class="fas fa-arrow-right ml-1 text-sm"></i></a>
+                    </div>
+
+                    <!-- Ziraat Bankası -->
+                    <div class="bg-white p-6 rounded-lg shadow-lg border border-gray-200">
+                        <i class="fas fa-university fa-3x text-red-600 mb-4"></i>
+                        <h3 class="text-xl font-semibold text-gray-800 mb-2">T.C. Ziraat Bankası</h3>
+                        <p class="text-gray-600 text-sm mb-1">Şube: Kamu Kurumsal Şube</p>
+                        <p class="text-gray-600 text-sm mb-4">Alıcı: AFAD</p>
+                        <p class="text-gray-800 font-mono text-xs break-all">TR73 0001 0017 4555 5555 5552 04</p>
+                    </div>
+
+                    <!-- Halkbank -->
+                    <div class="bg-white p-6 rounded-lg shadow-lg border border-gray-200">
+                        <i class="fas fa-university fa-3x text-red-600 mb-4"></i>
+                        <h3 class="text-xl font-semibold text-gray-800 mb-2">T. Halk Bankası</h3>
+                        <p class="text-gray-600 text-sm mb-1">Şube: Ankara Kurumsal Şube</p>
+                        <p class="text-gray-600 text-sm mb-4">Alıcı: AFAD</p>
+                        <p class="text-gray-800 font-mono text-xs break-all">TR47 0001 2009 4520 0016 0000 07</p>
+                    </div>
+
+                    <!-- Vakıfbank -->
+                    <div class="bg-white p-6 rounded-lg shadow-lg border border-gray-200">
+                        <i class="fas fa-university fa-3x text-red-600 mb-4"></i>
+                        <h3 class="text-xl font-semibold text-gray-800 mb-2">T. Vakıfbank</h3>
+                        <p class="text-gray-600 text-sm mb-1">Şube: Merkez Şube</p>
+                        <p class="text-gray-600 text-sm mb-4">Alıcı: AFAD</p>
+                        <p class="text-gray-800 font-mono text-xs break-all">TR71 0001 5001 5800 7296 1144 97</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Sıkça Sorulan Sorular Bölümü -->
+        <section id="faq" class="py-20 bg-gray-100">
+            <div class="container mx-auto px-6 max-w-3xl">
+                <h2 class="text-3xl font-bold text-center text-gray-800 mb-12">Sıkça Sorulan Sorular</h2>
+                <div class="space-y-6">
+                    <details class="bg-white p-6 rounded-lg shadow-sm">
+                        <summary class="font-semibold text-lg text-gray-800">Yaptığım bağışların yerine ulaştığından nasıl emin olabilirim?</summary>
+                        <p class="text-gray-600 mt-4">Tüm bağışlar AFAD koordinesinde toplanmakta ve şeffaf bir şekilde ihtiyaç sahiplerine ulaştırılmaktadır. Harcama raporlarımız düzenli olarak resmi web sitemizde yayınlanmaktadır.</p>
+                    </details>
+                    <details class="bg-white p-6 rounded-lg shadow-sm">
+                        <summary class="font-semibold text-lg text-gray-800">Kayıt olarak bağış yapmanın avantajı nedir?</summary>
+                        <p class="text-gray-600 mt-4">Kayıtlı kullanıcılarımız, geçmiş bağışlarını tek bir panelden takip edebilir, bağış makbuzlarına kolayca ulaşabilir ve kayıtlı bilgileriyle çok daha hızlı bağış yapabilirler.</p>
+                    </details>
+                    <details class="bg-white p-6 rounded-lg shadow-sm">
+                        <summary class="font-semibold text-lg text-gray-800">SMS ile bağış yaptığımda ücretlendirme nasıl oluyor?</summary>
+                        <p class="text-gray-600 mt-4">"DEPREM" yazıp 1868'e gönderdiğinizde, faturalı veya faturasız hattınızdan ilgili operatörünüzün belirlediği bağış bedeli (örn: 50 TL) tahsil edilir ve AFAD'a aktarılır.</p>
+                    </details>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- SAYFA 2: GİRİŞ SAYFASI -->
+    <main id="page-login" class="hidden flex-grow flex items-center justify-center py-12 md:py-20">
+        <div class="relative z-10 p-6 w-full max-w-md mx-auto">
+            <!-- Giriş Formu Kartı -->
+            <div class="bg-white p-8 rounded-lg shadow-xl text-gray-800 text-left">
+                <h1 class="text-3xl font-bold mb-4 text-center text-red-600">Giriş Yap</h1>
+                <p class="text-lg mb-6 text-center text-gray-600">Bağışlarınızı görmek için giriş yapın.</p>
+
+                <!-- Giriş Formu -->
+                <form id="loginForm">
+                    <!-- Hata Mesajı Alanı -->
+                    <div id="loginErrorMessage" class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg mb-4 hidden" role="alert">
+                        <!-- Hata mesajı buraya eklenecek -->
+                    </div>
+
+                    <!-- Bilgiler -->
+                    <div class="space-y-4 mb-4">
+                        <div>
+                            <label for="loginEmail" class="block text-gray-700 font-semibold mb-2">E-posta Adresi *</label>
+                            <input type="email" id="loginEmail" placeholder="ornek@eposta.com" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500">
+                        </div>
+                        <div>
+                            <label for="loginPassword" class="block text-gray-700 font-semibold mb-2">Şifre *</label>
+                            <input type="password" id="loginPassword" placeholder="••••••••" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500">
+                        </div>
+                    </div>
+
+                    <!-- Şifremi Unuttum -->
+                    <div class="mb-6 text-right">
+                        <a href="#" class="text-sm text-red-600 hover:underline">Şifrenizi mi unuttunuz?</a>
+                    </div>
+                    
+                    <!-- Gönder Butonu -->
+                    <button type="submit" class="w-full bg-red-600 text-white font-bold py-4 px-6 rounded-lg text-lg hover:bg-red-700 transition duration-300 shadow-lg">
+                        Giriş Yap
+                    </button>
+                </form>
+                
+                <!-- Kayıt Linki -->
+                <p class="text-center text-sm text-gray-600 mt-6">
+                    Hesabınız yok mu? 
+                    <a href="#" onclick="showPage('page-register'); return false;" class="font-semibold text-red-600 hover:underline">Hesap Oluşturun</a>
+                </p>
+                
+                <!-- Anonim Devam Et Linki -->
+                <p class="text-center text-sm text-gray-600 mt-4">
+                    veya 
+                    <a href="#" onclick="showPage('page-home'); return false;" class="font-semibold text-red-600 hover:underline">Anonim Olarak Bağış Yapın</a>
+                </p>
+            </div>
+        </div>
+    </main>
+
+    <!-- SAYFA 3: KAYIT SAYFASI -->
+    <main id="page-register" class="hidden flex-grow flex items-center justify-center py-12 md:py-20">
+        <div class="relative z-10 p-6 w-full max-w-md mx-auto">
+            <!-- Kayıt Formu Kartı -->
+            <div class="bg-white p-8 rounded-lg shadow-xl text-gray-800 text-left">
+                <h1 class="text-3xl font-bold mb-4 text-center text-red-600">Hesap Oluştur</h1>
+                <p class="text-lg mb-6 text-center text-gray-600">Bağışlarınızı takip edebilmek için kayıt olun.</p>
+
+                <!-- Kayıt Formu -->
+                <form id="registrationForm">
+                    <!-- Hata Mesajı Alanı -->
+                    <div id="regErrorMessage" class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg mb-4 hidden" role="alert">
+                        <!-- Hata mesajı buraya eklenecek -->
+                    </div>
+
+                    <!-- Kişisel Bilgiler -->
+                    <div class="space-y-6 mb-4">
+                        
+                        <!-- Bölüm 1: Kişisel Bilgiler -->
+                        <div>
+                            <h3 class="text-lg font-semibold text-gray-800 border-b pb-2 mb-4">Kişisel Bilgiler</h3>
+                            <div class="space-y-4">
+                                <div>
+                                    <label for="regFullName" class="block text-gray-700 font-semibold mb-2">Ad Soyad *</label>
+                                    <input type="text" id="regFullName" placeholder="Adınız Soyadınız" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500">
+                                </div>
+                                <div>
+                                    <label for="regEmail" class="block text-gray-700 font-semibold mb-2">E-posta Adresi *</label>
+                                    <input type="email" id="regEmail" placeholder="ornek@eposta.com" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500">
+                                </div>
+                                <div>
+                                    <label for="regPhone" class="block text-gray-700 font-semibold mb-2">Telefon Numarası *</label>
+                                    <input type="tel" id="regPhone" placeholder="5XX XXX XX XX" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Bölüm 2: Güvenlik Bilgileri -->
+                        <div>
+                            <h3 class="text-lg font-semibold text-gray-800 border-b pb-2 mb-4">Güvenlik Bilgileri</h3>
+                            <div class="space-y-4">
+                                <div>
+                                    <label for="regPassword" class="block text-gray-700 font-semibold mb-2">Şifre *</label>
+                                    <input type="password" id="regPassword" placeholder="••••••••" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500">
+                                </div>
+                                <div>
+                                    <label for="regPasswordConfirm" class="block text-gray-700 font-semibold mb-2">Şifre Tekrar *</label>
+                                    <input type="password" id="regPasswordConfirm" placeholder="••••••••" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Onay -->
+                    <div class="mb-6">
+                        <label class="flex items-center text-gray-600">
+                            <input type="checkbox" id="regPrivacyCheck" class="w-5 h-5 text-red-600 border-gray-300 rounded focus:ring-red-500">
+                            <span class="ml-3 text-sm">
+                                <a href="#" class="text-red-600 hover:underline">Kullanıcı Sözleşmesi ve Aydınlatma Metni</a>'ni okudum, kabul ediyorum. *
+                            </span>
+                        </label>
+                    </div>
+                    
+                    <!-- Gönder Butonu -->
+                    <button type="submit" class="w-full bg-red-600 text-white font-bold py-4 px-6 rounded-lg text-lg hover:bg-red-700 transition duration-300 shadow-lg">
+                        Hesabımı Oluştur
+                    </button>
+                </form>
+                
+                <!-- Giriş Linki -->
+                <p class="text-center text-sm text-gray-600 mt-6">
+                    Zaten bir hesabınız var mı? 
+                    <a href="#" onclick="showPage('page-login'); return false;" class="font-semibold text-red-600 hover:underline">Giriş Yapın</a>
+                </p>
+            </div>
+        </div>
+    </main>
+
+    <!-- SAYFA 4: ÖDEME SAYFASI -->
+    <main id="page-payment" class="hidden flex-grow flex items-center justify-center py-12 md:py-20">
+        <div class="container mx-auto p-6 w-full max-w-4xl">
+            <div class="bg-white p-8 rounded-lg shadow-xl grid grid-cols-1 md:grid-cols-2 gap-12">
+                
+                <!-- Sol Taraf: Ödeme Formu -->
+                <div class="text-gray-800">
+                    <h1 class="text-3xl font-bold mb-6 text-red-600">Ödeme Bilgileri</h1>
+                    
+                    <form id="paymentForm">
+                        <div class="space-y-4">
+                            <div>
+                                <label for="cardName" class="block text-gray-700 font-semibold mb-2">Kart Üzerindeki İsim *</label>
+                                <input type="text" id="cardName" placeholder="Adınız Soyadınız" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500" required>
+                            </div>
+                            
+                            <div>
+                                <label for="cardNumber" class="block text-gray-700 font-semibold mb-2">Kart Numarası *</label>
+                                <input type="text" id="cardNumber" placeholder="•••• •••• •••• ••••" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500" required>
+                            </div>
+                            
+                            <div class="flex gap-4">
+                                <div class="w-1/2">
+                                    <label for="cardExpiry" class="block text-gray-700 font-semibold mb-2">Son Kul. Tarihi *</label>
+                                    <input type="text" id="cardExpiry" placeholder="AA/YY" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500" required>
+                                </div>
+                                <div class="w-1/2">
+                                    <label for="cardCVC" class="block text-gray-700 font-semibold mb-2">CVC *</label>
+                                    <input type="text" id="cardCVC" placeholder="123" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500" required>
+                                </div>
+                            </div>
+
+                            <!-- Güvenlik İkonları -->
+                            <div class="flex items-center justify-center space-x-4 pt-4">
+                                <i class="fab fa-cc-visa fa-2x text-gray-500"></i>
+                                <i class="fab fa-cc-mastercard fa-2x text-gray-500"></i>
+                                <span class="text-sm font-semibold text-green-600">
+                                    <i class="fas fa-lock"></i> Güvenli Ödeme
+                                </span>
+                            </div>
+                            
+                            <button type="submit" class="w-full bg-red-600 text-white font-bold py-4 px-6 rounded-lg text-lg hover:bg-red-700 transition duration-300 shadow-lg mt-6">
+                                Ödemeyi Tamamla
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Sağ Taraf: Bağış Özeti -->
+                <div class="bg-gray-50 p-6 rounded-lg border">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-6 border-b pb-4">Bağış Özeti</h2>
+                    <div class="space-y-4">
+                        <div class="flex justify-between">
+                            <span class="text-gray-600">Bağış Kampanyası:</span>
+                            <span class="font-semibold text-gray-800" id="summaryCampaign">Filistin - Gazze İnsani Yardım</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-600">Bağışçı:</span>
+                            <span class="font-semibold text-gray-800" id="summaryName">Anonim</span>
+                        </div>
+                        <div class="border-t my-4"></div>
+                        <div class="flex justify-between items-center text-xl">
+                            <span class="font-bold text-gray-900">Toplam Tutar:</span>
+                            <span class="font-bold text-red-600 text-2xl" id="summaryAmount">250 TL</span>
+                        </div>
+                    </div>
+                    <p class="text-sm text-gray-500 mt-6">
+                        Bu ekrandaki veriler, "Hızlı Bağış" formundan otomatik olarak çekilecektir. (Şu an statik örnektir.)
+                    </p>
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+    <!-- SAYFA 5: KULLANICI PANELİ (HESABIM) -->
+    <main id="page-account" class="hidden flex-grow py-12 md:py-16">
+        <div class="container mx-auto p-6 w-full max-w-7xl">
+            <h1 class="text-3xl font-bold text-gray-900 mb-8">Hesabım</h1>
+            
+            <!-- Karşılama ve Hızlı İstatistikler -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+                <!-- Karşılama -->
+                <div class="md:col-span-1 bg-white p-6 rounded-lg shadow-lg">
+                    <h2 class="text-2xl font-semibold text-red-600 mb-2">Hoş Geldiniz,</h2>
+                    <p class="text-xl text-gray-700 font-medium" id="accountName">[Kullanıcı Adı Soyadı]</p>
+                    <p class="text-gray-500 mt-1" id="accountEmail">[kullanici@eposta.com]</p>
+                    <a href="#" class="text-sm text-red-600 hover:underline mt-4 inline-block">Profili Düzenle</a>
+                </div>
+                
+                <!-- İstatistikler -->
+                <div class="md:col-span-2 grid grid-cols-2 gap-6">
+                    <div class="bg-white p-6 rounded-lg shadow-lg text-center">
+                        <span class="text-4xl font-bold text-red-600">1,250 TL</span>
+                        <p class="text-gray-600 font-semibold mt-2">Toplam Kayıtlı Bağış</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow-lg text-center">
+                        <span class="text-4xl font-bold text-gray-700">5</span>
+                        <p class="text-gray-600 font-semibold mt-2">Toplam İşlem Adedi</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- YENİ: Bağışçı Rozetleri (Oyunlaştırma) -->
+            <div class="bg-white p-8 rounded-lg shadow-xl mb-10">
+                <h2 class="text-2xl font-bold text-gray-800 mb-8">Bağışçı Rozetleriniz</h2>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-10 lg:gap-20 text-center">
+                    
+                    <!-- Bronz Rozet (Kazanılmış) -->
+                    <!-- Simülasyon: Toplam bağış (1250 TL) > 0 TL olduğu için kazanıldı -->
+                    <div class="flex flex-col justify-center items-center group opacity-100 transition-opacity">
+                        <div class="relative h-48 w-48 flex items-center justify-center rounded-full bg-yellow-700 border-8 border-yellow-600 shadow-lg text-white" title="Bronz Destekçi: İlk bağışınızla kazandınız.">
+                            <i class="fas fa-shield-alt fa-5x"></i>
+                            <div class="absolute -top-2 -right-2 bg-white rounded-full p-1 shadow-md">
+                                <i class="fas fa-check-circle text-green-500 text-4xl"></i>
+                            </div>
+                        </div>
+                        <span class="inline-block mt-6 bg-yellow-700 px-8 py-2 text-center text-white text-lg font-semibold rounded-lg shadow-md">
+                            Bronz Destekçi
+                        </span>
+                        <p class="text-gray-600 mt-2 text-sm">İlk bağışınızla kazandınız.</p>
+                    </div>
+                    
+                    <!-- Gümüş Rozet (Kazanılmış) -->
+                    <!-- Simülasyon: Toplam bağış (1250 TL) > 500 TL olduğu için kazanıldı -->
+                    <div class="flex flex-col justify-center items-center group opacity-100 transition-opacity">
+                        <div class="relative h-48 w-48 flex items-center justify-center rounded-full bg-gray-500 border-8 border-gray-400 shadow-lg text-white" title="Gümüş Destekçi: Toplam 500 TL bağışa ulaştınız.">
+                            <i class="fas fa-star fa-5x"></i>
+                             <div class="absolute -top-2 -right-2 bg-white rounded-full p-1 shadow-md">
+                                <i class="fas fa-check-circle text-green-500 text-4xl"></i>
+                            </div>
+                        </div>
+                        <span class="inline-block mt-6 bg-gray-500 px-8 py-2 text-center text-white text-lg font-semibold rounded-lg shadow-md">
+                            Gümüş Destekçi
+                        </span>
+                        <p class="text-gray-600 mt-2 text-sm">500 TL+ bağışa ulaştınız.</p>
+                    </div>
+                    
+                    <!-- Altın Rozet (Kilitli) -->
+                    <!-- Simülasyon: Toplam bağış (1250 TL) < 1500 TL olduğu için kilitli -->
+                    <div class="flex flex-col justify-center items-center group opacity-30 transition-opacity" title="Bu rozeti açmak için toplam 1500 TL bağışa ulaşın.">
+                        <div class="relative h-48 w-48 flex items-center justify-center rounded-full bg-gray-300 border-8 border-gray-200 shadow-lg text-gray-600">
+                            <i class="fas fa-gem fa-5x"></i>
+                            <div class="absolute inset-0 flex items-center justify-center bg-black/30 rounded-full">
+                                <i class="fas fa-lock text-white text-5xl"></i>
+                            </div>
+                        </div>
+                        <span class="inline-block mt-6 bg-gray-300 px-8 py-2 text-center text-gray-600 text-lg font-semibold rounded-lg shadow-md">
+                            Altın Destekçi
+                        </span>
+                        <p class="text-gray-500 mt-2 text-sm">1500 TL+ bağış gerekli.</p>
+                    </div>
+                </div>
+            </div>
+            <!-- Rozetler Bitiş -->
+
+            <!-- Bağış Geçmişi -->
+            <div class="bg-white p-8 rounded-lg shadow-xl">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-2xl font-bold text-gray-800">Geçmiş Bağışlar</h2>
+                    <a href="#" onclick="openModalWithCampaign('','')" class="bg-red-600 text-white font-semibold py-2 px-5 rounded-lg hover:bg-red-700 transition duration-300">
+                        <i class="fas fa-plus mr-2"></i>Yeni Bağış Yap
+                    </a>
+                </div>
+
+                <!-- Bağış Tablosu -->
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left">
+                        <thead class="bg-gray-100">
+                            <tr>
+                                <th class="py-3 px-4 font-semibold text-gray-700">Tarih</th>
+                                <th class="py-3 px-4 font-semibold text-gray-700">Kampanya</th>
+                                <th class="py-3 px-4 font-semibold text-gray-700">Tutar</th>
+                                <th class="py-3 px-4 font-semibold text-gray-700">Durum</th>
+                                <th class="py-3 px-4 font-semibold text-gray-700">Makbuz</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y">
+                            <!-- Örnek Satır 1 -->
+                            <tr class="hover:bg-gray-50">
+                                <td class="py-4 px-4 text-gray-700">10.10.2025</td>
+                                <td class="py-4 px-4 text-gray-900 font-medium">Filistin - Gazze İnsani Yardım</td>
+                                <td class="py-4 px-4 text-gray-900 font-medium">500 TL</td>
+                                <td class="py-4 px-4">
+                                    <span class="bg-green-100 text-green-700 font-semibold py-1 px-3 rounded-full text-sm">Başarılı</span>
+                                </td>
+                                <td class="py-4 px-4">
+                                    <a href="#" class="text-red-600 hover:underline"><i class="fas fa-download"></i> İndir</a>
+                                </td>
+                            </tr>
+                            <!-- Örnek Satır 2 -->
+                            <tr class="hover:bg-gray-50">
+                                <td class="py-4 px-4 text-gray-700">06.02.2025</td>
+                                <td class="py-4 px-4 text-gray-900 font-medium">Deprem Bağışları</td>
+                                <td class="py-4 px-4 text-gray-900 font-medium">250 TL</td>
+                                <td class="py-4 px-4">
+                                    <span class="bg-green-100 text-green-700 font-semibold py-1 px-3 rounded-full text-sm">Başarılı</span>
+                                </td>
+                                <td class="py-4 px-4">
+                                    <a href="#" class="text-red-600 hover:underline"><i class="fas fa-download"></i> İndir</a>
+                                </td>
+                            </tr>
+                            <!-- Örnek Satır 3 -->
+                            <tr class="hover:bg-gray-50">
+                                <td class="py-4 px-4 text-gray-700">15.01.2025</td>
+                                <td class="py-4 px-4 text-gray-900 font-medium">Genel Bağış</td>
+                                <td class="py-4 px-4 text-gray-900 font-medium">500 TL</td>
+                                <td class="py-4 px-4">
+                                    <span class="bg-green-100 text-green-700 font-semibold py-1 px-3 rounded-full text-sm">Başarılı</span>
+                                </td>
+                                <td class="py-4 px-4">
+                                    <a href="#" class="text-red-600 hover:underline"><i class="fas fa-download"></i> İndir</a>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+
+
+    <!-- Footer (Tüm Sayfalar için Ortak) -->
+    <footer class="bg-gray-800 text-gray-300 py-12">
+        <div class="container mx-auto px-6">
+            <div class="flex flex-col md:flex-row justify-between items-center text-center md:text-left">
+                <!-- Sol Taraf: Logo ve Copyright -->
+                <div class="mb-6 md:mb-0">
+                    <img src="https://www.afad.gov.tr/kurumlar/afad.gov.tr/Tasarim/afad_logo_footer.png" alt="AFAD Alt Logo" class="h-16 mx-auto md:mx-0 mb-4">
+                    <p class="text-lg font-semibold mb-2">T.C. İçişleri Bakanlığı Afet ve Acil Durum Yönetimi Başkanlığı</p>
+                    <p>&copy; 2025 Tüm hakları saklıdır.</p>
+                </div>
+                <!-- Sağ Taraf: Sosyal Medya -->
+                <div>
+                    <p class="text-lg font-semibold mb-4">Sosyal Medya</p>
+                    <div class="flex justify-center md:justify-start space-x-6">
+                        <a href="https://www.facebook.com/afadbaskanlik" target="_blank" rel="noopener noreferrer" class="hover:text-white transition duration-300" aria-label="Facebook">
+                            <i class="fab fa-facebook-f fa-2x"></i>
+                        </a>
+                        <a href="https://twitter.com/afadbaskanlik" target="_blank" rel="noopener noreferrer" class="hover:text-white transition duration-300" aria-label="Twitter/X">
+                            <!-- X Logosu (SVG) -->
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-twitter-x" viewBox="0 0 16 16">
+                                <path d="M12.6.75h2.454l-5.36 6.142L16 15.25h-4.937l-3.867-5.07-4.425 5.07H.316l5.733-6.57L0 .75h5.063l3.495 4.633L12.601.75Zm-.86 13.028h1.36L4.323 2.145H2.865z"/>
+                            </svg>
+                        </a>
+                        <a href="https://www.instagram.com/afadbaskanlik/" target="_blank" rel="noopener noreferrer" class="hover:text-white transition duration-300" aria-label="Instagram">
+                            <i class="fab fa-instagram fa-2x"></i>
+                        </a>
+                        <a href="https://www.youtube.com/user/afadbaskanlik" target="_blank" rel="noopener noreferrer" class="hover:text-white transition duration-300" aria-label="YouTube">
+                            <i class="fab fa-youtube fa-2x"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+
+    <!-- Hızlı Bağış Modalı (Tüm Sayfalar için Ortak) -->
+    <div id="donationModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 hidden">
+        <!-- Overlay -->
+        <div id="modalOverlay" class="absolute inset-0 bg-black opacity-75 modal-overlay"></div>
+        
+        <!-- Modal İçeriği -->
+        <div class="relative bg-white p-8 rounded-lg shadow-xl text-gray-800 text-left w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+            <!-- Kapatma Butonu -->
+            <button id="closeModalBtn" class="absolute top-4 right-4 text-gray-500 hover:text-gray-800 text-2xl">&times;</button>
+            
+            <h1 class="text-3xl md:text-4xl font-bold mb-4 text-center text-red-600">Hızlı Bağış</h1>
+            <p class="text-lg mb-6 text-center">Desteğiniz için teşekkür ederiz.</p>
+
+            <!-- Kapsamlı Bağış Formu (Modal içinde) -->
+            <form id="heroDonationForm">
+                <!-- Hata Mesajı Alanı -->
+                <div id="heroErrorMessage" class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg mb-4 hidden" role="alert">
+                    <!-- Hata mesajı buraya eklenecek -->
+                </div>
+
+                <!-- 1. Adım: Kampanya Seçimi (GÜNCELLENDİ) -->
+                <div class="mb-4">
+                    <label for="campaignSelect" class="block text-gray-700 font-semibold mb-2">Bağış Türü Seçin *</label>
+                    <select id="campaignSelect" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500">
+                        <option value="">Lütfen bir kampanya seçin...</option>
+                        <option value="yangin-sel">Yangın ve Sel Afeti Kampanyası</option>
+                        <option value="zekat">Filistin ve Gazze İçin Zekat Kampanyası</option>
+                        <option value="filistin">Filistin Yardım Kampanyası</option>
+                        <option value="deprem">Deprem Bağışları</option>
+                        <option value="pakistan">Pakistan Yardım Kampanyası</option>
+                        <option value="afganistan">Afganistan Yardım Kampanyası</option>
+                        <option value="idlib">İdlib Yardım Kampanyası</option>
+                        <option value="sudan">Sudan Yardım Kampanyası</option>
+                        <option value="genel">Genel Bağış (Diğer)</option>
+                    </select>
+                </div>
+
+                <!-- 2. Adım: Tutar Seçimi -->
+                <div class="mb-4">
+                    <label class="block text-gray-700 font-semibold mb-2">Bağış Tutarı (TL) *</label>
+                    <div class="flex flex-wrap gap-3 mb-3">
+                        <button type="button" onclick="setDonationAmount(100)" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-2 px-4 rounded-lg transition duration-300">100</button>
+                        <button type="button" onclick="setDonationAmount(250)" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-2 px-4 rounded-lg transition duration-300">250</button>
+                        <button type="button" onclick="setDonationAmount(500)" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-2 px-4 rounded-lg transition duration-300">500</button>
+                        <button type="button" onclick="setDonationAmount(1000)" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-2 px-4 rounded-lg transition duration-300">1000</button>
+                    </div>
+                    <input type="number" id="heroCustomAmount" placeholder="Diğer Tutar" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500">
+                </div>
+
+                <!-- 3. Adım: Kişisel Bilgiler (İsteğe Bağlı) -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                    <div>
+                        <label for="fullName" class="block text-gray-700 font-semibold mb-2">Ad Soyad (İsteğe Bağlı)</label>
+                        <input type="text" id="fullName" placeholder="Adınız Soyadınız" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500">
+                    </div>
+                    <div>
+                        <label for="phone" class="block text-gray-700 font-semibold mb-2">Telefon Numarası (İsteğe Bağlı)</label>
+                        <input type="tel" id="phone" placeholder="5XX XXX XX XX" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500">
+                    </div>
+                    <div class="md:col-span-2">
+                        <label for="email" class="block text-gray-700 font-semibold mb-2">E-posta Adresi (İsteğe Bağlı)</label>
+                        <input type="email" id="email" placeholder="ornek@eposta.com" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500">
+                    </div>
+                </div>
+
+                <!-- 4. Adım: Onay -->
+                <div class="mb-6">
+                    <label class="flex items-center text-gray-600">
+                        <input type="checkbox" id="privacyCheck" class="w-5 h-5 text-red-600 border-gray-300 rounded focus:ring-red-500">
+                        <span class="ml-3 text-sm">
+                            <a href="#" class="text-red-600 hover:underline">Aydınlatma Metni</a>'ni okudum, anladım ve kabul ediyorum. *
+                        </span>
+                    </label>
+                </div>
+                
+                <!-- 5. Adım: Gönder Butonu -->
+                <button type="submit" class="w-full bg-red-600 text-white font-bold py-4 px-6 rounded-lg text-lg hover:bg-red-700 transition duration-300 shadow-lg">
+                    Güvenle Bağış Yap
+                </button>
+            </form>
+        </div>
+    </div>
+
+
+    <!-- TÜM SAYFALARIN JAVASCRIPT KODLARI -->
+    <script>
+        // --- SAYFA YÖNETİMİ ---
+        const allPages = ['page-home', 'page-login', 'page-register', 'page-payment', 'page-account'];
+        const headerLoggedOut = document.getElementById('header-logged-out');
+        const headerLoggedIn = document.getElementById('header-logged-in');
+
+        /**
+         * İlgili sayfayı gösterir ve diğerlerini gizler.
+         * @param {string} pageId Gösterilecek sayfanın ID'si
+         * @param {boolean} isLoggedIn Kullanıcı giriş yapmış durumda mı? (Header'ı değiştirmek için)
+         */
+        function showPage(pageId, isLoggedIn = false) {
+            // Tüm ana içerik alanlarını gizle
+            allPages.forEach(id => {
+                const page = document.getElementById(id);
+                if (page) {
+                    page.classList.add('hidden');
+                }
+            });
+
+            // İstenen sayfayı göster
+            const targetPage = document.getElementById(pageId);
+            if (targetPage) {
+                targetPage.classList.remove('hidden');
+            }
+
+            // Header durumunu ayarla
+            if (isLoggedIn) {
+                headerLoggedOut.classList.add('hidden');
+                headerLoggedIn.classList.remove('hidden');
+            } else {
+                headerLoggedOut.classList.remove('hidden');
+                headerLoggedIn.classList.add('hidden');
+            }
+
+            // Sayfa başına kaydır
+            window.scrollTo(0, 0);
+        }
+
+        // --- HIZLI BAĞIŞ MODALI ---
+        const heroDonationForm = document.getElementById('heroDonationForm');
+        const heroCustomAmountInput = document.getElementById('heroCustomAmount');
+        const heroErrorMessage = document.getElementById('heroErrorMessage');
+        const donationModal = document.getElementById('donationModal');
+        const openModalBtn = document.getElementById('openModalBtn');
+        const closeModalBtn = document.getElementById('closeModalBtn');
+        const modalOverlay = document.getElementById('modalOverlay');
+
+        // Modal açma
+        function openModal() {
+            donationModal.classList.remove('hidden');
+        }
+        
+        // YENİ FONKSİYON: Kampanyayı seçerek modalı aç
+        /**
+         * Hızlı Bağış modalını açar ve kampanyayı önceden seçer.
+         * @param {string} campaignTitle (Şu an kullanılmıyor, ancak özet için saklanabilir)
+         * @param {string} campaignValue Modal'daki <option> 'value' değeri
+         */
+        function openModalWithCampaign(campaignTitle, campaignValue) {
+            const campaignSelect = document.getElementById('campaignSelect');
+            
+            if (campaignValue) {
+                campaignSelect.value = campaignValue;
+            } else {
+                campaignSelect.value = ""; // Hızlı Bağış butonu için formu temizle
+            }
+            
+            // Modal'ı aç
+            openModal();
+        }
+
+        // openModalBtn'i (Header'daki Hızlı Bağış) de yeni fonksiyona bağla
+        openModalBtn.onclick = function() {
+            openModalWithCampaign('', '');
+        };
+
+        // Modal kapatma
+        closeModalBtn.addEventListener('click', () => {
+            donationModal.classList.add('hidden');
+        });
+        modalOverlay.addEventListener('click', () => {
+            donationModal.classList.add('hidden');
+        });
+
+        // Hızlı tutar seçimi (modal içinde)
+        function setDonationAmount(amount) {
+            heroCustomAmountInput.value = amount;
+            if (!heroErrorMessage.classList.contains('hidden')) {
+                heroErrorMessage.classList.add('hidden');
+            }
+        }
+
+        // Hata gösterme (modal içinde)
+        function showModalError(message) {
+            heroErrorMessage.textContent = message;
+            heroErrorMessage.classList.remove('hidden');
+        }
+
+        // Hızlı Bağış Formu Gönderimi
+        heroDonationForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const campaignSelect = document.getElementById('campaignSelect');
+            const campaignText = campaignSelect.options[campaignSelect.selectedIndex].text;
+            const amount = parseInt(heroCustomAmountInput.value, 10);
+            const fullName = document.getElementById('fullName').value;
+            const privacy = document.getElementById('privacyCheck').checked;
+
+            if (campaignSelect.value === "") {
+                showModalError('Lütfen bir bağış türü (kampanya) seçin.');
+                return;
+            }
+            if (isNaN(amount) || amount <= 0) {
+                showModalError('Lütfen 0\'dan büyük geçerli bir bağış tutarı girin.');
+                return;
+            }
+            if (!privacy) {
+                showModalError('Lütfen aydınlatma metnini okuyup onaylayın.');
+                return;
+            }
+
+            heroErrorMessage.classList.add('hidden');
+            alert('Bağışınız için teşekkür ederiz! (Bu bir simülasyondur, ödeme sayfasına yönlendiriliyorsunuz...)');
+            
+            // Ödeme sayfasındaki özet bilgilerini güncelle
+            document.getElementById('summaryCampaign').textContent = campaignText;
+            document.getElementById('summaryAmount').textContent = amount + " TL";
+            document.getElementById('summaryName').textContent = fullName || 'Anonim';
+
+            heroDonationForm.reset();
+            donationModal.classList.add('hidden');
+            
+            // Ödeme sayfasına yönlendir
+            showPage('page-payment');
+        });
+
+        // --- GİRİŞ SAYFASI (page-login) ---
+        const loginForm = document.getElementById('loginForm');
+        const loginErrorMessage = document.getElementById('loginErrorMessage');
+
+        function showLoginError(message) {
+            loginErrorMessage.textContent = message;
+            loginErrorMessage.classList.remove('hidden');
+        }
+
+        loginForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+
+            if (email.trim() === "" || password.trim() === "") {
+                showLoginError('E-posta ve şifre alanları zorunludur.');
+                return;
+            }
+
+            loginErrorMessage.classList.add('hidden');
+            alert('Giriş başarılı! (Bu bir simülasyondur, profil sayfanıza yönlendiriliyorsunuz...)');
+            
+            // Simülasyon: Profil sayfasındaki bilgileri güncelle
+            // (Gerçekte bu veriler kayıt formundan gelirdi)
+            document.getElementById('accountName').textContent = "Ahmet Yılmaz (Simülasyon)";
+            document.getElementById('accountEmail').textContent = email;
+            
+            // Hesap Paneli sayfasına yönlendir (Giriş yapılmış olarak)
+            showPage('page-account', true); 
+        });
+
+        // --- KAYIT SAYFASI (page-register) ---
+        const registrationForm = document.getElementById('registrationForm');
+        const regErrorMessage = document.getElementById('regErrorMessage');
+
+        function showRegError(message) {
+            regErrorMessage.textContent = message;
+            regErrorMessage.classList.remove('hidden');
+            regErrorMessage.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+
+        registrationForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const fullName = document.getElementById('regFullName').value;
+            const email = document.getElementById('regEmail').value;
+            const phone = document.getElementById('regPhone').value;
+            const password = document.getElementById('regPassword').value;
+            const passwordConfirm = document.getElementById('regPasswordConfirm').value;
+            const privacy = document.getElementById('regPrivacyCheck').checked;
+
+            if (fullName.trim() === "" || email.trim() === "" || phone.trim() === "" || password === "" || passwordConfirm === "") {
+                showRegError('Lütfen tüm zorunlu alanları doldurun.');
+                return;
+            }
+            if (password !== passwordConfirm) {
+                showRegError('Şifreler eşleşmiyor. Lütfen kontrol edin.');
+                return;
+            }
+            if (password.length < 6) {
+                showRegError('Şifreniz en az 6 karakter olmalıdır.');
+                return;
+            }
+            if (email.trim() === "" || !email.includes('@')) {
+                showRegError('Lütfen geçerli bir e-posta adresi girin.');
+                return;
+            }
+            if (!privacy) {
+                showRegError('Lütfen kullanıcı sözleşmesini ve aydınlatma metnini onaylayın.');
+                return;
+            }
+
+            regErrorMessage.classList.add('hidden');
+            alert('Hesabınız başarıyla oluşturuldu! (Bu bir simülasyondur, giriş sayfasına yönlendiriliyorsunuz...)');
+            registrationForm.reset();
+            // Giriş sayfasına yönlendir
+            showPage('page-login');
+        });
+        
+        // --- ÖDEME SAYFASI (page-payment) ---
+        document.getElementById('paymentForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Simülasyon
+            alert('Ödeme başarıyla alındı! (Simülasyon)\n\nDesteğiniz için teşekkür ederiz. Ana sayfaya yönlendiriliyorsunuz.');
+            
+            // Başarılı ödeme sonrası ana sayfaya yönlendir
+            showPage('page-home');
+        });
+
+    </script>
+
+</body>
+</html>
