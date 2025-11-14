@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="tr">
 <head>
@@ -77,7 +78,7 @@
                 <img src="https://www.afad.gov.tr/kurumlar/afad.gov.tr/IcSite/afad-logo/afad.png" alt="AFAD Logosu" class="h-12 mr-3">
                 <span class="text-xl font-bold text-gray-800 hidden md:block">Afet ve Acil Durum Yönetimi Başkanlığı</span>
             </a>
-            <!-- Navigasyon Linkleri -->
+            <!-- Navigasyon Linkleri (Faaliyetlerimiz kaldırıldı) -->
             <div class="hidden md:flex items-center space-x-6">
                 <a href="#" onclick="showPage('page-home'); return false;" class="text-gray-700 hover:text-red-600 transition duration-300">Ana Sayfa</a>
                 <a href="#bagis-kanallari" class="text-gray-700 hover:text-red-600 transition duration-300">Bağış Kanalları</a>
@@ -116,7 +117,7 @@
                 <img src="https://www.afad.gov.tr/kurumlar/afad.gov.tr/IcSite/afad-logo/afad.png" alt="AFAD Logosu" class="h-12 mr-3">
                 <span class="text-xl font-bold text-gray-800 hidden md:block">Afet ve Acil Durum Yönetimi Başkanlığı</span>
             </a>
-            <!-- Navigasyon Linkleri (Giriş Yapılmış) -->
+            <!-- Navigasyon Linkleri (Giriş Yapılmış) (Faaliyetlerimiz kaldırıldı) -->
             <div class="hidden md:flex space-x-6 items-center">
                 <a href="#" onclick="showPage('page-home'); return false;" class="text-gray-700 hover:text-red-600 transition duration-300">Ana Sayfa</a>
                 <!-- (Yeni Bağış Yap) butonu modalı açar -->
@@ -142,6 +143,7 @@
         <section class="relative h-auto min-h-[calc(100vh-72px)] flex items-center justify-center text-center py-20">
             <!-- Arka Plan Görseli -->
             <div class="absolute inset-0">
+                <!-- DÜZELTME: GitHub linki ?raw=true ile güncellendi -->
                 <img src="https://github.com/demircole004-a11y/bagis/blob/706bb235f515d72ec3215b9fe80a94378000cae7/iyilikgemisi.jpg?raw=true" 
                      alt="AFAD Yardım Ekibi" 
                      class="w-full h-full object-cover">
@@ -149,10 +151,14 @@
                 <div class="absolute inset-0 bg-black opacity-60"></div>
             </div>
             
-            <!-- İçerik -->
-            <div class="relative z-10 p-6 w-full max-w-2xl mx-auto">
+            <!-- İçerik (YENİ: Kapatma Butonu Eklendi) -->
+            <div id="hero-card-container" class="relative z-10 p-6 w-full max-w-2xl mx-auto transition-opacity duration-500 ease-out">
                 <!-- Seçim Kartı -->
-                <div class="bg-white/95 backdrop-blur-sm p-8 md:p-12 rounded-lg shadow-xl text-gray-800">
+                <div class="relative bg-white/95 backdrop-blur-sm p-8 md:p-12 rounded-lg shadow-xl text-gray-800">
+                    <!-- YENİ: Kapatma Butonu -->
+                    <button onclick="closeHeroCard()" class="absolute top-2 right-3 text-gray-400 hover:text-gray-600 text-3xl z-10" aria-label="Kapat">
+                        &times;
+                    </button>
                     <h1 class="text-3xl md:text-4xl font-bold mb-4 text-center text-red-600">Desteğinizle Güçlüyüz</h1>
                     <p class="text-lg mb-8 text-center">Afetzedelere yardım elinizi uzatın. Desteğiniz, umut olacak.</p>
                 </div>
@@ -329,6 +335,8 @@
             </div>
         </section>
         <!-- KAMPANYALAR BİTİŞ -->
+
+        <!-- (Faaliyetlerimiz sayfası kaldırıldı) -->
 
 
         <!-- Bağış Kanalları Bölümü -->
@@ -927,9 +935,33 @@
     <!-- TÜM SAYFALARIN JAVASCRIPT KODLARI -->
     <script>
         // --- SAYFA YÖNETİMİ ---
+        // DÜZELTME: 'allPages' dizisi geri eklendi
         const allPages = ['page-home', 'page-login', 'page-register', 'page-payment', 'page-account'];
-        const headerLoggedOut = document.getElementById('header-logged-out');
-        const headerLoggedIn = document.getElementById('header-logged-in');
+        
+        // DÜZELTME: Tüm element değişkenlerini önce 'let' ile globalde tanımla
+        let headerLoggedOut = null;
+        let headerLoggedIn = null;
+        let infoModal = null;
+        let infoModalTitle = null;
+        let infoModalBody = null;
+        let cartModal = null;
+        let cartItemsList = null;
+        let cartEmptyMsg = null;
+        let checkoutCartBtn = null;
+        let cartErrorMessage = null;
+        let heroDonationForm = null;
+        let heroCustomAmountInput = null;
+        let heroErrorMessage = null;
+        let donationModal = null;
+        let openModalBtn = null;
+        let closeModalBtn = null;
+        let modalOverlay = null;
+        let loginForm = null;
+        let loginErrorMessage = null;
+        let registrationForm = null;
+        let regErrorMessage = null;
+        let paymentForm = null;
+        let heroCardContainer = null; // YENİ: Kapatma butonu için eklendi
 
         /**
          * İlgili sayfayı gösterir ve diğerlerini gizler.
@@ -951,13 +983,15 @@
                 targetPage.classList.remove('hidden');
             }
 
-            // Header durumunu ayarla
-            if (isLoggedIn) {
-                headerLoggedOut.classList.add('hidden');
-                headerLoggedIn.classList.remove('hidden');
-            } else {
-                headerLoggedOut.classList.remove('hidden');
-                headerLoggedIn.classList.add('hidden');
+            // Header durumunu ayarla (Elementlerin yüklenmiş olduğundan emin ol)
+            if (headerLoggedOut && headerLoggedIn) {
+                if (isLoggedIn) {
+                    headerLoggedOut.classList.add('hidden');
+                    headerLoggedIn.classList.remove('hidden');
+                } else {
+                    headerLoggedOut.classList.remove('hidden');
+                    headerLoggedIn.classList.add('hidden');
+                }
             }
             
             // Sepet sayacını da güncelle (giriş durumuna göre doğru sayacı göstermek için)
@@ -1008,35 +1042,20 @@
         };
 
         // YENİ: Bilgi Modalı Fonksiyonları
-        const infoModal = document.getElementById('infoModal');
-        const infoModalTitle = document.getElementById('infoModalTitle');
-        const infoModalBody = document.getElementById('infoModalBody');
-        
         function openInfoModal(campaignId) {
             const details = campaignDetails[campaignId];
-            if (!details) return;
+            if (!details || !infoModal) return;
             
-            infoModalTitle.textContent = details.title;
-            infoModalBody.innerHTML = `<p>${details.description}</p>`; // HTML olarak ekle
+            if(infoModalTitle) infoModalTitle.textContent = details.title;
+            if(infoModalBody) infoModalBody.innerHTML = `<p>${details.description}</p>`; // HTML olarak ekle
             infoModal.classList.remove('hidden');
         }
         
         function closeInfoModal() {
-            infoModal.classList.add('hidden');
+            if(infoModal) infoModal.classList.add('hidden');
         }
         
-        // Bilgi modalı kapatma butonları
-        document.getElementById('infoModalOverlay').addEventListener('click', closeInfoModal);
-        document.getElementById('closeInfoModalBtn').addEventListener('click', closeInfoModal);
-        document.getElementById('closeInfoModalBtn2').addEventListener('click', closeInfoModal);
-
         // YENİ: Sepet Fonksiyonları
-        const cartModal = document.getElementById('cartModal');
-        const cartItemsList = document.getElementById('cart-items-list');
-        const cartEmptyMsg = document.getElementById('cart-empty-msg');
-        const checkoutCartBtn = document.getElementById('checkoutCartBtn');
-        const cartErrorMessage = document.getElementById('cartErrorMessage');
-
         function addToCart(campaignId) {
             const details = campaignDetails[campaignId];
             if (!details) return;
@@ -1074,16 +1093,20 @@
             const badges = [badge, badgeLoggedIn];
             
             badges.forEach(b => {
-                if (count > 0) {
-                    b.textContent = count;
-                    b.classList.remove('hidden');
-                } else {
-                    b.classList.add('hidden');
+                if (b) { // Eleman bulunduysa devam et
+                    if (count > 0) {
+                        b.textContent = count;
+                        b.classList.remove('hidden');
+                    } else {
+                        b.classList.add('hidden');
+                    }
                 }
             });
         }
 
         function showCartModal() {
+            if (!cartItemsList || !cartEmptyMsg || !checkoutCartBtn) return;
+
             cartItemsList.innerHTML = ''; // Listeyi temizle
             
             if (cart.length === 0) {
@@ -1111,12 +1134,12 @@
                 });
             }
             
-            cartErrorMessage.classList.add('hidden'); // Hata varsa sıfırla
-            cartModal.classList.remove('hidden');
+            if(cartErrorMessage) cartErrorMessage.classList.add('hidden'); // Hata varsa sıfırla
+            if(cartModal) cartModal.classList.remove('hidden');
         }
 
         function closeCartModal() {
-            cartModal.classList.add('hidden');
+            if(cartModal) cartModal.classList.add('hidden');
         }
         
         function removeFromCart(campaignId) {
@@ -1143,13 +1166,15 @@
 
             if (totalAmount <= 0) {
                 // Hata göster
-                cartErrorMessage.textContent = 'Lütfen sepete bağış yapmak için en az bir geçerli tutar girin.';
-                cartErrorMessage.classList.remove('hidden');
+                if (cartErrorMessage) {
+                    cartErrorMessage.textContent = 'Lütfen sepete bağış yapmak için en az bir geçerli tutar girin.';
+                    cartErrorMessage.classList.remove('hidden');
+                }
                 return;
             }
             
             // Hata yoksa ödeme sayfasına git
-            cartErrorMessage.classList.add('hidden');
+            if(cartErrorMessage) cartErrorMessage.classList.add('hidden');
             
             // Ödeme sayfasındaki özeti doldur
             document.getElementById('summaryCampaign').textContent = `Toplu Bağış (${itemsToPay.length} Kampanya)`;
@@ -1157,8 +1182,8 @@
             
             // Giriş yapmış kullanıcının adını al, yoksa 'Anonim' yaz
             const accountNameEl = document.getElementById('accountName');
-            const isLoggedIn = !headerLoggedIn.classList.contains('hidden');
-            if (isLoggedIn && accountNameEl.textContent !== '[Kullanıcı Adı Soyadı]') {
+            const isLoggedIn = (headerLoggedIn && !headerLoggedIn.classList.contains('hidden'));
+            if (isLoggedIn && accountNameEl && accountNameEl.textContent !== '[Kullanıcı Adı Soyadı]') {
                 document.getElementById('summaryName').textContent = accountNameEl.textContent;
             } else {
                 document.getElementById('summaryName').textContent = 'Anonim (Simülasyon)';
@@ -1173,26 +1198,13 @@
             updateCartBadge();
         }
 
-        // Sepet modalı kapatma butonları
-        document.getElementById('cartModalOverlay').addEventListener('click', closeCartModal);
-        document.getElementById('closeCartModalBtn').addEventListener('click', closeCartModal);
-
-
         // --- HIZLI BAĞIŞ MODALI (Mevcut Kod) ---
-        const heroDonationForm = document.getElementById('heroDonationForm');
-        const heroCustomAmountInput = document.getElementById('heroCustomAmount');
-        const heroErrorMessage = document.getElementById('heroErrorMessage');
-        const donationModal = document.getElementById('donationModal');
-        const openModalBtn = document.getElementById('openModalBtn');
-        const closeModalBtn = document.getElementById('closeModalBtn');
-        const modalOverlay = document.getElementById('modalOverlay');
 
         // Modal açma
         function openModal() {
-            donationModal.classList.remove('hidden');
+            if(donationModal) donationModal.classList.remove('hidden');
         }
         
-        // YENİ FONKSİYON: Kampanyayı seçerek modalı aç
         /**
          * Hızlı Bağış modalını açar ve kampanyayı önceden seçer.
          * @param {string} campaignTitle (Şu an kullanılmıyor, ancak özet için saklanabilir)
@@ -1201,186 +1213,243 @@
         function openModalWithCampaign(campaignTitle, campaignValue) {
             const campaignSelect = document.getElementById('campaignSelect');
             
-            if (campaignValue) {
-                campaignSelect.value = campaignValue;
-            } else {
-                campaignSelect.value = ""; // Hızlı Bağış butonu için formu temizle
+            if (campaignSelect) {
+                if (campaignValue) {
+                    campaignSelect.value = campaignValue;
+                } else {
+                    campaignSelect.value = ""; // Hızlı Bağış butonu için formu temizle
+                }
             }
             
             // Modal'ı aç
             openModal();
         }
 
-        // openModalBtn'i (Header'daki Hızlı Bağış) de yeni fonksiyona bağla
-        openModalBtn.onclick = function() {
-            openModalWithCampaign('', '');
-        };
-
-        // Modal kapatma
-        closeModalBtn.addEventListener('click', () => {
-            donationModal.classList.add('hidden');
-        });
-        modalOverlay.addEventListener('click', () => {
-            donationModal.classList.add('hidden');
-        });
-
         // Hızlı tutar seçimi (modal içinde)
         function setDonationAmount(amount) {
-            heroCustomAmountInput.value = amount;
-            if (!heroErrorMessage.classList.contains('hidden')) {
+            if(heroCustomAmountInput) heroCustomAmountInput.value = amount;
+            if (heroErrorMessage && !heroErrorMessage.classList.contains('hidden')) {
                 heroErrorMessage.classList.add('hidden');
             }
         }
 
         // Hata gösterme (modal içinde)
         function showModalError(message) {
-            heroErrorMessage.textContent = message;
-            heroErrorMessage.classList.remove('hidden');
+            if (heroErrorMessage) {
+                heroErrorMessage.textContent = message;
+                heroErrorMessage.classList.remove('hidden');
+            }
         }
-
-        // Hızlı Bağış Formu Gönderimi
-        heroDonationForm.addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            const campaignSelect = document.getElementById('campaignSelect');
-            const campaignText = campaignSelect.options[campaignSelect.selectedIndex].text;
-            const amount = parseInt(heroCustomAmountInput.value, 10);
-            const fullName = document.getElementById('fullName').value;
-            const privacy = document.getElementById('privacyCheck').checked;
-
-            if (campaignSelect.value === "") {
-                showModalError('Lütfen bir bağış türü (kampanya) seçin.');
-                return;
-            }
-            if (isNaN(amount) || amount <= 0) {
-                showModalError('Lütfen 0\'dan büyük geçerli bir bağış tutarı girin.');
-                return;
-            }
-            if (!privacy) {
-                showModalError('Lütfen aydınlatma metnini okuyup onaylayın.');
-                return;
-            }
-
-            heroErrorMessage.classList.add('hidden');
-            // alert('Bağışınız için teşekkür ederiz! (Bu bir simülasyondur, ödeme sayfasına yönlendiriliyorsunuz...)');
-            
-            // Ödeme sayfasındaki özet bilgilerini güncelle
-            document.getElementById('summaryCampaign').textContent = campaignText;
-            document.getElementById('summaryAmount').textContent = amount + " TL";
-            document.getElementById('summaryName').textContent = fullName || 'Anonim';
-
-            heroDonationForm.reset();
-            donationModal.classList.add('hidden');
-            
-            // Ödeme sayfasına yönlendir
-            showPage('page-payment');
-        });
 
         // --- GİRİŞ SAYFASI (page-login) ---
-        const loginForm = document.getElementById('loginForm');
-        const loginErrorMessage = document.getElementById('loginErrorMessage');
-
         function showLoginError(message) {
-            loginErrorMessage.textContent = message;
-            loginErrorMessage.classList.remove('hidden');
-        }
-
-        loginForm.addEventListener('submit', function(e) {
-            e.preventDefault();
-            const email = document.getElementById('loginEmail').value;
-            const password = document.getElementById('loginPassword').value;
-
-            if (email.trim() === "" || password.trim() === "") {
-                showLoginError('E-posta ve şifre alanları zorunludur.');
-                return;
+            if (loginErrorMessage) {
+                loginErrorMessage.textContent = message;
+                loginErrorMessage.classList.remove('hidden');
             }
-
-            loginErrorMessage.classList.add('hidden');
-            alert('Giriş başarılı! (Bu bir simülasyondur, profil sayfanıza yönlendiriliyorsunuz...)');
-            
-            // Simülasyon: Profil sayfasındaki bilgileri güncelle
-            // (Gerçekte bu veriler kayıt formundan gelirdi)
-            document.getElementById('accountName').textContent = "Ahmet Yılmaz (Simülasyon)";
-            document.getElementById('accountEmail').textContent = email;
-            
-            // Hesap Paneli sayfasına yönlendir (Giriş yapılmış olarak)
-            showPage('page-account', true); 
-        });
+        }
 
         // --- KAYIT SAYFASI (page-register) ---
-        const registrationForm = document.getElementById('registrationForm');
-        const regErrorMessage = document.getElementById('regErrorMessage');
-
         function showRegError(message) {
-            regErrorMessage.textContent = message;
-            regErrorMessage.classList.remove('hidden');
-            regErrorMessage.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            if (regErrorMessage) {
+                regErrorMessage.textContent = message;
+                regErrorMessage.classList.remove('hidden');
+                regErrorMessage.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
         }
 
-        registrationForm.addEventListener('submit', function(e) {
-            e.preventDefault();
-            const fullName = document.getElementById('regFullName').value;
-            const email = document.getElementById('regEmail').value;
-            const phone = document.getElementById('regPhone').value;
-            const password = document.getElementById('regPassword').value;
-            const passwordConfirm = document.getElementById('regPasswordConfirm').value;
-            const privacy = document.getElementById('regPrivacyCheck').checked;
-
-            if (fullName.trim() === "" || email.trim() === "" || phone.trim() === "" || password === "" || passwordConfirm === "") {
-                showRegError('Lütfen tüm zorunlu alanları doldurun.');
-                return;
+        // YENİ: Ana sayfa kartını kapatma
+        function closeHeroCard() {
+            if (heroCardContainer) {
+                heroCardContainer.classList.add('opacity-0');
+                setTimeout(() => {
+                    heroCardContainer.classList.add('hidden');
+                }, 500); // animasyon süresiyle eşleş
             }
-            if (password !== passwordConfirm) {
-                showRegError('Şifreler eşleşmiyor. Lütfen kontrol edin.');
-                return;
-            }
-            if (password.length < 6) {
-                showRegError('Şifreniz en az 6 karakter olmalıdır.');
-                return;
-            }
-            if (email.trim() === "" || !email.includes('@')) {
-                showRegError('Lütfen geçerli bir e-posta adresi girin.');
-                return;
-            }
-            if (!privacy) {
-                showRegError('Lütfen kullanıcı sözleşmesini ve aydınlatma metnini onaylayın.');
-                return;
-            }
-
-            regErrorMessage.classList.add('hidden');
-            alert('Hesabınız başarıyla oluşturuldu! (Bu bir simülasyondur, giriş sayfasına yönlendiriliyorsunuz...)');
-            registrationForm.reset();
-            // Giriş sayfasına yönlendir
-            showPage('page-login');
-        });
+        }
         
-        // --- ÖDEME SAYFASI (page-payment) ---
-        document.getElementById('paymentForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            // Simülasyon
-            alert('Ödeme başarıyla alındı! (Simülasyon)\n\nDesteğiniz için teşekkür ederiz. Ana sayfaya yönlendiriliyorsunuz.');
-            
-            // Başarılı ödeme sonrası ana sayfaya yönlendir
-            // Simülasyon: Giriş yapılmışsa 'Hesabım'a, yapılmamışsa 'Ana Sayfa'ya dön.
-            const isLoggedIn = !headerLoggedIn.classList.contains('hidden');
-            if (isLoggedIn) {
-                // TODO: Gerçek bir uygulamada burada 'Hesabım' sayfası güncellenmeli.
-                // Biz şimdilik 'Hesabım'a yönlendirelim.
-                showPage('page-account', true);
-            } else {
-                showPage('page-home');
-            }
-        });
-        
-        // --- YENİ: SAYFAYI BAŞLAT ---
-        // Sayfa yüklendiğinde ana sayfayı göster (Boş sayfa sorununu çözer)
+        // --- DÜZELTME: SAYFAYI BAŞLAT ve TÜM OLAYLARI ATA ---
+        // Sayfa yüklendiğinde tüm elementleri bul ve olay dinleyicilerini ata
         window.addEventListener('DOMContentLoaded', (event) => {
+            
+            // Elementleri global değişkenlere ata
+            headerLoggedOut = document.getElementById('header-logged-out');
+            headerLoggedIn = document.getElementById('header-logged-in');
+            infoModal = document.getElementById('infoModal');
+            infoModalTitle = document.getElementById('infoModalTitle');
+            infoModalBody = document.getElementById('infoModalBody');
+            cartModal = document.getElementById('cartModal');
+            cartItemsList = document.getElementById('cart-items-list');
+            cartEmptyMsg = document.getElementById('cart-empty-msg');
+            checkoutCartBtn = document.getElementById('checkoutCartBtn');
+            cartErrorMessage = document.getElementById('cartErrorMessage');
+            heroDonationForm = document.getElementById('heroDonationForm');
+            heroCustomAmountInput = document.getElementById('heroCustomAmount');
+            heroErrorMessage = document.getElementById('heroErrorMessage');
+            donationModal = document.getElementById('donationModal');
+            openModalBtn = document.getElementById('openModalBtn');
+            closeModalBtn = document.getElementById('closeModalBtn');
+            modalOverlay = document.getElementById('modalOverlay');
+            loginForm = document.getElementById('loginForm');
+            loginErrorMessage = document.getElementById('loginErrorMessage');
+            registrationForm = document.getElementById('registrationForm');
+            regErrorMessage = document.getElementById('regErrorMessage');
+            paymentForm = document.getElementById('paymentForm');
+            heroCardContainer = document.getElementById('hero-card-container'); // YENİ: Kapatma butonu için eklendi
+
+            // Bilgi modalı kapatma butonları
+            document.getElementById('infoModalOverlay')?.addEventListener('click', closeInfoModal);
+            document.getElementById('closeInfoModalBtn')?.addEventListener('click', closeInfoModal);
+            document.getElementById('closeInfoModalBtn2')?.addEventListener('click', closeInfoModal);
+
+            // Sepet modalı kapatma butonları
+            document.getElementById('cartModalOverlay')?.addEventListener('click', closeCartModal);
+            document.getElementById('closeCartModalBtn')?.addEventListener('click', closeCartModal);
+
+            // Header Hızlı Bağış butonu
+            if(openModalBtn) {
+                openModalBtn.onclick = function() {
+                    openModalWithCampaign('', '');
+                };
+            }
+
+            // Hızlı Bağış Modalı kapatma butonları
+            if(closeModalBtn) {
+                closeModalBtn.addEventListener('click', () => {
+                    donationModal.classList.add('hidden');
+                });
+            }
+            if(modalOverlay) {
+                modalOverlay.addEventListener('click', () => {
+                    donationModal.classList.add('hidden');
+                });
+            }
+
+            // Form dinleyicileri
+            if (heroDonationForm) {
+                heroDonationForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    
+                    const campaignSelect = document.getElementById('campaignSelect');
+                    const campaignText = campaignSelect.options[campaignSelect.selectedIndex].text;
+                    const amount = parseInt(heroCustomAmountInput.value, 10);
+                    const fullNameInput = document.getElementById('fullName'); // Düzeltme: Elementi burada al
+                    const fullName = fullNameInput ? fullNameInput.value : '';
+                    const privacyCheck = document.getElementById('privacyCheck'); // Düzeltme: Elementi burada al
+                    const privacy = privacyCheck ? privacyCheck.checked : false;
+
+
+                    if (campaignSelect.value === "") {
+                        showModalError('Lütfen bir bağış türü (kampanya) seçin.');
+                        return;
+                    }
+                    if (isNaN(amount) || amount <= 0) {
+                        showModalError('Lütfen 0\'dan büyük geçerli bir bağış tutarı girin.');
+                        return;
+                    }
+                    if (!privacy) {
+                        showModalError('Lütfen aydınlatma metnini okuyup onaylayın.');
+                        return;
+                    }
+
+                    if(heroErrorMessage) heroErrorMessage.classList.add('hidden');
+                    
+                    // Ödeme sayfasındaki özet bilgilerini güncelle
+                    document.getElementById('summaryCampaign').textContent = campaignText;
+                    document.getElementById('summaryAmount').textContent = amount + " TL";
+                    document.getElementById('summaryName').textContent = fullName || 'Anonim';
+
+                    heroDonationForm.reset();
+                    donationModal.classList.add('hidden');
+                    
+                    // Ödeme sayfasına yönlendir
+                    showPage('page-payment');
+                });
+            }
+
+            if (loginForm) {
+                loginForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    const email = document.getElementById('loginEmail').value;
+                    const password = document.getElementById('loginPassword').value;
+
+                    if (email.trim() === "" || password.trim() === "") {
+                        showLoginError('E-posta ve şifre alanları zorunludur.');
+                        return;
+                    }
+
+                    if(loginErrorMessage) loginErrorMessage.classList.add('hidden');
+                    alert('Giriş başarılı! (Bu bir simülasyondur, profil sayfanıza yönlendiriliyorsunuz...)');
+                    
+                    const accountNameEl = document.getElementById('accountName');
+                    const accountEmailEl = document.getElementById('accountEmail');
+                    if(accountNameEl) accountNameEl.textContent = "Ahmet Yılmaz (Simülasyon)";
+                    if(accountEmailEl) accountEmailEl.textContent = email;
+                    
+                    showPage('page-account', true); 
+                });
+            }
+
+            if (registrationForm) {
+                registrationForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    const fullName = document.getElementById('regFullName').value;
+                    const email = document.getElementById('regEmail').Value;
+                    const phone = document.getElementById('regPhone').value;
+                    const password = document.getElementById('regPassword').value;
+                    const passwordConfirm = document.getElementById('regPasswordConfirm').value;
+                    const privacy = document.getElementById('regPrivacyCheck').checked;
+
+                    if (fullName.trim() === "" || email.trim() === "" || phone.trim() === "" || password === "" || passwordConfirm === "") {
+                        showRegError('Lütfen tüm zorunlu alanları doldurun.');
+                        return;
+                    }
+                    if (password !== passwordConfirm) {
+                        showRegError('Şifreler eşleşmiyor. Lütfen kontrol edin.');
+                        return;
+                    }
+                    if (password.length < 6) {
+                        showRegError('Şifreniz en az 6 karakter olmalıdır.');
+                        return;
+                    }
+                    if (email.trim() === "" || !email.includes('@')) {
+                        showRegError('Lütfen geçerli bir e-posta adresi girin.');
+                        return;
+                    }
+                    if (!privacy) {
+                        showRegError('Lütfen kullanıcı sözleşmesini ve aydınlatma metnini onaylayın.');
+                        return;
+                    }
+
+                    if(regErrorMessage) regErrorMessage.classList.add('hidden');
+                    alert('Hesabınız başarıyla oluşturuldu! (Bu bir simülasyondur, giriş sayfasına yönlendiriliyorsunuz...)');
+                    registrationForm.reset();
+                    
+                    showPage('page-login');
+                });
+            }
+            
+            if (paymentForm) {
+                paymentForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    
+                    alert('Ödeme başarıyla alındı! (Simülasyon)\n\nDesteğiniz için teşekkür ederiz. Ana sayfaya yönlendiriliyorsunuz.');
+                    
+                    const isLoggedIn = (headerLoggedIn && !headerLoggedIn.classList.contains('hidden'));
+                    if (isLoggedIn) {
+                        showPage('page-account', true);
+                    } else {
+                        showPage('page-home');
+                    }
+                });
+            }
+
+            // --- SAYFAYI BAŞLAT ---
+            // Artık tüm elementler yüklendi, ana sayfayı göster
             showPage('page-home');
         });
 
     </script>
 
 </body>
-
 </html>
